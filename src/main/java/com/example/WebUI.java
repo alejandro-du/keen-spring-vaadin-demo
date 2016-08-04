@@ -1,10 +1,8 @@
 package com.example;
 
-import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.shared.communication.PushMode;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -16,7 +14,6 @@ import java.util.Map;
 
 @SpringUI
 @Theme(ValoTheme.THEME_NAME)
-@Push(value = PushMode.MANUAL)
 public class WebUI extends UI {
 
     private VerticalLayout layout = new VerticalLayout();
@@ -74,7 +71,6 @@ public class WebUI extends UI {
 
     private void showDashboard() {
         setContent(dashboard);
-        dashboard.update();
     }
 
 }

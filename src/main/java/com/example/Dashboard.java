@@ -1,15 +1,17 @@
 package com.example;
 
-import com.example.chart.TotalChart;
-import com.example.chart.ValueChart;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.keen.client.java.AbsoluteTimeframe;
+import io.keen.client.java.Query;
+import io.keen.client.java.QueryType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.vaadin.keen.charts.KeenChart;
 
 import javax.annotation.PostConstruct;
 
@@ -17,14 +19,15 @@ import javax.annotation.PostConstruct;
 @Scope("prototype")
 public class Dashboard extends VerticalLayout {
 
-    @Autowired
-    private TotalChart totalChart;
+    @Value("${keen.projectId}")
+    private String projectId;
 
-    @Autowired
-    private ValueChart valueChart;
+    @Value("${keen.readKey}")
+    private String readKey;
 
     @PostConstruct
     public void init() {
+        setSizeFull();
         setMargin(true);
         setSpacing(true);
 
@@ -32,19 +35,37 @@ public class Dashboard extends VerticalLayout {
         title.addStyleName(ValoTheme.LABEL_H1);
         addComponent(title);
 
-        GridLayout chartsLayout = new GridLayout(2, 2, totalChart, valueChart);
+        KeenChart total = new KeenChart(projectId, readKey, new Query.Builder(QueryType.SUM)
+                .withEventCollection("gifts")
+                .withTargetProperty("value")
+                .withTimeframe(new AbsoluteTimeframe("2016-08-01T00:00", "2016-08-31T23:59"))
+                .build());
+
+        KeenChart distribution = new KeenChart(projectId, readKey, new Query.Builder(QueryType.SUM)
+                .withEventCollection("gifts")
+                .withTargetProperty("value")
+                .withTimeframe(new AbsoluteTimeframe("2016-08-01T00:00", "2016-08-31T23:59"))
+                .withGroupBy("name")
+                .build());
+
+        KeenChart value = new KeenChart(projectId, readKey, new Query.Builder(QueryType.SUM)
+                .withEventCollection("gifts")
+                .withTargetProperty("value")
+                .withTimeframe(new AbsoluteTimeframe("2016-08-01T00:00", "2016-08-31T23:59"))
+                .withGroupBy("name")
+                .build());
+
+        KeenChart count = new KeenChart(projectId, readKey, new Query.Builder(QueryType.COUNT)
+                .withEventCollection("gifts")
+                .withTimeframe(new AbsoluteTimeframe("2016-08-01T00:00", "2016-08-31T23:59"))
+                .withInterval("daily")
+                .build());
+
+        GridLayout chartsLayout = new GridLayout(2, 2, total, distribution, value, count);
+        chartsLayout.setSizeFull();
         chartsLayout.setSpacing(true);
         addComponent(chartsLayout);
-    }
-
-    public void update() {
-        runInSeparateThread(() -> totalChart.update());
-        runInSeparateThread(() -> valueChart.update());
-    }
-
-    private void runInSeparateThread(Runnable runnable) {
-        new Thread(() -> UI.getCurrent().access(runnable)).start();
-        getUI().push();
+        setExpandRatio(chartsLayout, 1);
     }
 
 }
