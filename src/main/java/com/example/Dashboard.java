@@ -1,6 +1,7 @@
 package com.example;
 
 import com.example.chart.TotalChart;
+import com.example.chart.ValueChart;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
@@ -19,6 +20,9 @@ public class Dashboard extends VerticalLayout {
     @Autowired
     private TotalChart totalChart;
 
+    @Autowired
+    private ValueChart valueChart;
+
     @PostConstruct
     public void init() {
         setMargin(true);
@@ -28,16 +32,19 @@ public class Dashboard extends VerticalLayout {
         title.addStyleName(ValoTheme.LABEL_H1);
         addComponent(title);
 
-        GridLayout chartsLayout = new GridLayout(2, 2, totalChart);
+        GridLayout chartsLayout = new GridLayout(2, 2, totalChart, valueChart);
+        chartsLayout.setSpacing(true);
         addComponent(chartsLayout);
     }
 
     public void update() {
-        new Thread(() -> {
-            UI.getCurrent().access(() -> {
-                totalChart.update();
-            });
-        }).start();
+        runInSeparateThread(() -> totalChart.update());
+        runInSeparateThread(() -> valueChart.update());
+    }
+
+    private void runInSeparateThread(Runnable runnable) {
+        new Thread(() -> UI.getCurrent().access(runnable)).start();
+        getUI().push();
     }
 
 }

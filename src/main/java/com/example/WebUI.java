@@ -4,6 +4,7 @@ import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.communication.PushMode;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -15,7 +16,7 @@ import java.util.Map;
 
 @SpringUI
 @Theme(ValoTheme.THEME_NAME)
-@Push
+@Push(value = PushMode.MANUAL)
 public class WebUI extends UI {
 
     private VerticalLayout layout = new VerticalLayout();
@@ -40,9 +41,9 @@ public class WebUI extends UI {
         instructions.setWidth("270px");
         layout.addComponent(instructions);
 
-        addGiftOption("Voucher", FontAwesome.TICKET, ValoTheme.BUTTON_FRIENDLY, 12);
-        addGiftOption("Prepaid card", FontAwesome.CREDIT_CARD, ValoTheme.BUTTON_PRIMARY, 14);
-        addGiftOption("Surprise", FontAwesome.GIFT, ValoTheme.BUTTON_DANGER, 14);
+        addGiftOption("Prepaid card", FontAwesome.CREDIT_CARD, ValoTheme.BUTTON_PRIMARY, 12);
+        addGiftOption("Voucher", FontAwesome.TICKET, ValoTheme.BUTTON_FRIENDLY, 14);
+        addGiftOption("Surprise", FontAwesome.GIFT, ValoTheme.BUTTON_DANGER, 16);
 
         Button viewDashboard = new Button("View dashboard");
         viewDashboard.addStyleName(ValoTheme.BUTTON_LINK);

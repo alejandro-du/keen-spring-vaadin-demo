@@ -1,5 +1,6 @@
 package com.example;
 
+import com.vaadin.wscdn.WidgetSet;
 import io.keen.client.java.JavaKeenClientBuilder;
 import io.keen.client.java.KeenClient;
 import io.keen.client.java.KeenProject;
@@ -7,9 +8,6 @@ import io.keen.client.java.KeenQueryClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
-
-import java.util.concurrent.Executor;
 
 @Configuration
 public class Config {
@@ -41,8 +39,8 @@ public class Config {
     }
 
     @Bean
-    public Executor taskExecutor() {
-        return new SimpleAsyncTaskExecutor();
+    public WidgetSet vaadinCdnInitializer() {
+        return new WidgetSet();
     }
 
 }

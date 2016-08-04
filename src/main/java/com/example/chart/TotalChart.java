@@ -2,14 +2,12 @@ package com.example.chart;
 
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import io.keen.client.java.AbsoluteTimeframe;
 import io.keen.client.java.KeenQueryClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -40,14 +38,12 @@ public class TotalChart extends VerticalLayout {
     }
 
     public void update() {
-        UI.getCurrent().access(() -> {
-            try {
-                double sum = keenQueryClient.sum("gifts", "value", new AbsoluteTimeframe("2016-01-01", "2020-12-31"));
-                total.setValue("$" + sum);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        try {
+            double sum = keenQueryClient.sum("gifts", "value", new AbsoluteTimeframe("2016-01-01", "2020-12-31"));
+            total.setValue("$" + sum);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
